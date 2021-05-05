@@ -4,7 +4,6 @@ import (
 	"awesomeProject/src/utils/pair"
 	"awesomeProject/src/utils/util"
 	"fmt"
-
 	//"awesomeProject/src/utils/pair"
 	"math/big"
 )
@@ -55,20 +54,32 @@ func (rsaObj *RSAAccumulator)GetVal(bigInteger big.Int) *big.Int {
 	return rsaObj.data[bigInteger.String()]
 }
 
-func (rsaObj *RSAAccumulator)AddMember(key *big.Int) *big.Int {
-	_,ok := rsaObj.data[key.String()]
+//func (rsaObj *RSAAccumulator)AddMember(key *big.Int) *big.Int {
+//	_,ok := rsaObj.data[key.String()]
+//	if ok{
+//		return rsaObj.a
+//	}
+//	hashPrime,_ :=util.HashToPrime(key)
+//	//fmt.Println(hashPrime)
+//	rsaObj.a.Exp(rsaObj.a,hashPrime,rsaObj.n)
+//	rsaObj.data[key.String()]=hashPrime
+//	return rsaObj.a
+//}
+
+func (rsaObj *RSAAccumulator)AddMember(key string) *big.Int {
+	_,ok := rsaObj.data[key]
 	if ok{
 		return rsaObj.a
 	}
 	hashPrime,_ :=util.HashToPrime(key)
 	//fmt.Println(hashPrime)
 	rsaObj.a.Exp(rsaObj.a,hashPrime,rsaObj.n)
-	rsaObj.data[key.String()]=hashPrime
+	rsaObj.data[key]=hashPrime
 	return rsaObj.a
 }
 
-func (rsaObj *RSAAccumulator)ProveMembership(key *big.Int) *big.Int {
-	_,ok := rsaObj.data[key.String()]
+func (rsaObj *RSAAccumulator)ProveMembership(key string) *big.Int {
+	_,ok := rsaObj.data[key]
 	if !ok{
 		return nil
 	}
@@ -80,7 +91,7 @@ func (rsaObj *RSAAccumulator)DeleteMember(bigInteger big.Int) *big.Int{
 	return big.NewInt(0)
 }
 
-func (rsaObj *RSAAccumulator)VerifyMembership(key *big.Int,proof *big.Int) bool{
+func (rsaObj *RSAAccumulator)VerifyMembership(key string,proof *big.Int) bool{
 	hashPrime,_ := util.HashToPrime(key)
 	return	doVerifyMembership(rsaObj.a,hashPrime,proof,rsaObj.n)
 }
@@ -95,9 +106,9 @@ func (rsaObj *RSAAccumulator)VerifyMembership(key *big.Int,proof *big.Int) bool{
 //	return big.NewInt(0)
 //}
 
-func (rsaObj *RSAAccumulator)VerifyNoMembership(){
-
-}
+//func (rsaObj *RSAAccumulator)VerifyNoMembership(){
+//
+//}
 
 func doVerifyMembership(accumulatorState *big.Int,hashPrime *big.Int,proof *big.Int,n *big.Int) bool{
 	result := big.NewInt(1)
@@ -105,15 +116,17 @@ func doVerifyMembership(accumulatorState *big.Int,hashPrime *big.Int,proof *big.
 	fmt.Println("当前累加器状态",accumulatorState)
 	fmt.Println("当前关键字hash",hashPrime)
 	fmt.Println("当前关键字存在性证明",proof)
-	fmt.Println("当前n",n)
 	fmt.Println("当前result",result)
-	return true
+	if result.Cmp(accumulatorState)==0{
+		return true
+	}
+	return false
 }
 
-func (rsaObj *RSAAccumulator)iterateAndGetProductWithoutX(key *big.Int) *big.Int{
+func (rsaObj *RSAAccumulator)iterateAndGetProductWithoutX(key string) *big.Int{
 	result := big.NewInt(1)
 	for k,v := range rsaObj.data{
-		if k!=key.String(){
+		if k!=key{
 			result.Mul(result,v)
 		}
 	}

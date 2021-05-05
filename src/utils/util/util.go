@@ -27,7 +27,21 @@ func CheckPrime(p *big.Int)bool{
 	return p.ProbablyPrime(PRIME_CERTAINTY)
 }
 
-func HashToPrime(input *big.Int) (*big.Int,*big.Int){
+//func HashToPrime(input *big.Int) (*big.Int,*big.Int){
+//	count := 0
+//	x := HashToLength(input)
+//	//fmt.Println(x)
+//	for{
+//		if CheckPrime(x)==true {
+//			break
+//		}
+//		x.Add(x,big.NewInt(1))
+//		count++
+//	}
+//	return x,big.NewInt(int64(count));
+//}
+
+func HashToPrime(input string) (*big.Int,*big.Int){
 	count := 0
 	x := HashToLength(input)
 	//fmt.Println(x)
@@ -41,10 +55,32 @@ func HashToPrime(input *big.Int) (*big.Int,*big.Int){
 	return x,big.NewInt(int64(count));
 }
 
-//采用sha256做hash,截取前bitLength位
-func HashToLength(x *big.Int) *big.Int {
+//采用sha256做hash,截取前bitLength(256)位
+//func HashToLength(x *big.Int) *big.Int {
+//	var randomHexString string
+//	randomHexString = x.String()
+//	hash := sha256.New()
+//	hash.Write([]byte(randomHexString))
+//	hashResult := hash.Sum(nil)
+//	//32个字节表示
+//	//fmt.Println(hashResult)
+//	hashcode := hex.EncodeToString(hashResult)
+//	//64个十六进制数表示
+//	//fmt.Println(hashcode)
+//	n := new(big.Int)
+//	n,ok := n.SetString(hashcode,16)
+//	if !ok {
+//		fmt.Println("SetString: error")
+//		return big.NewInt(0)
+//	}
+//	//十进制表示
+//	//fmt.Println(n)
+//	return n
+//}
+
+func HashToLength(x string) *big.Int {
 	var randomHexString string
-	randomHexString = x.String()
+	randomHexString = x
 	hash := sha256.New()
 	hash.Write([]byte(randomHexString))
 	hashResult := hash.Sum(nil)
