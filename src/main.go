@@ -2,14 +2,17 @@ package main
 
 import (
 	"awesomeProject/src/accumulator/rsaAccumulator"
+	"awesomeProject/src/utils/util"
 	"bufio"
+	"crypto/rand"
 	"fmt"
 	"io"
 	"os"
-	"time"
 )
 
 func main()  {
+	pri,err := rand.Prime(rand.Reader,1024)
+	fmt.Println(pri)
 	//rsa生成密钥测试
 	//privateKey, err := rsa.GenerateKey(rand.Reader, 12)
 	//if err!=nil {
@@ -65,19 +68,37 @@ func main()  {
 	fmt.Println("当前累加器状态A:",test.GetA().String())
 	test.AddMember("11")
 	fmt.Println("当前累加器状态A:",test.GetA().String())
+	witness:=test.ProveMembership("11")
 	test.AddMember("13")
+	elem,_ := util.HashToPrime("13")
+	witness.Exp(witness,elem,test.GetN())
 	fmt.Println("当前累加器状态A:",test.GetA().String())
 	test.AddMember(crtStr)
-	witness:=test.ProveMembership(crtStr)
+	elem,_ = util.HashToPrime(crtStr)
+	witness.Exp(witness,elem,test.GetN())
+	//witness:=test.ProveMembership("11")
 	fmt.Println("witnss",witness)
 	fmt.Println("A:",test.GetA())
-	start := time.Now()
-	if test.VerifyMembership(crtStr,witness){
+	if test.VerifyMembership("11",witness){
 		fmt.Println("true")
 	}else{
 		fmt.Println("false")
 	}
-	fmt.Println(time.Since(start))
 	//start := time.Now()
 	//fmt.Println(time.Since(start))
+
+	//test_witness := test.ProveMembership(crtStr)
+	//hashPrime,_ :=util.HashToPrime("5")
+	//fmt.Println(test_witness)
+	//fmt.Println(hashPrime)
+	//fmt.Println("********快速幂计算**********")
+	//start := time.Now()
+	//for count:=0;count<10000;count++{
+	//	test_witness.Exp(test_witness,hashPrime,test.GetN())
+	//}
+	//fmt.Println(time.Since(start))
+}
+
+func test(){
+
 }

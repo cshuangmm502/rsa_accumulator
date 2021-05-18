@@ -158,6 +158,45 @@ func Bezoute_Coefficients(a big.Int,b big.Int)(big.Int,big.Int){
 	return *x,*y
 }
 
-func CheckBigIntByteLength(x big.Int,length int) bool{
-	return true
+func calculate_product(list []*big.Int)*big.Int{
+	base := big.NewInt(1)
+	for _,i := range list{
+		base.Mul(base,i)
+	}
+	return base
+}
+
+func create_all_membership_witness(A0 *big.Int,set map[string]*big.Int,N *big.Int)[]*big.Int{
+	var primes []*big.Int
+	for k := range set{
+		prime,_ := HashToPrime(k)
+		primes=append(primes, prime)
+	}
+	return root_factor(A0,primes,N)
+}
+
+func root_factor(g *big.Int,primes []*big.Int,N *big.Int)[]*big.Int{
+	n := len(primes)
+	if n==1{
+		var result []*big.Int
+		result = append(result,g)
+		return result
+	}
+
+	n_tag := n/2
+	primes_L := primes[n_tag:n]
+	product_L := calculate_product(primes_L)
+	g_L := g.Exp(g,product_L,N)
+
+	primes_R := primes[0:n_tag]
+	product_R := calculate_product(primes_R)
+	g_R := g.Exp(g,product_R,N)
+
+	L := root_factor(g_L, primes_R,N)
+	R := root_factor(g_R, primes_L,N)
+
+	var result []*big.Int
+	result = append(result, L...)
+	result = append(result, R...)
+	return result
 }

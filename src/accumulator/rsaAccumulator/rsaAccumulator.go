@@ -4,12 +4,11 @@ import (
 	"awesomeProject/src/utils/pair"
 	"awesomeProject/src/utils/util"
 	"fmt"
-	//"awesomeProject/src/utils/pair"
 	"math/big"
 )
 
 const (
-	RSA_KEY_SIZE = 12
+	RSA_KEY_SIZE = 16
 	RSA_PRIME_SIZE = RSA_KEY_SIZE/2
 	ACCUMULATED_PRIME_SIZE = 128
 )
