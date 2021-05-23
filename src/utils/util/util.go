@@ -109,27 +109,27 @@ func GenerateRandomNumber(min big.Int,max big.Int) *big.Int{
 }
 
 
-func exgcd(a int,b int,x *int,y *int)(int){
-	if b>a{
-		return exgcd(b,a,y,x)
-	}
-	if b==0{
-		*x = 1
-		*y = 0
-		return a
-	}
-	var x1 = new(int)
-	var d = exgcd(b,a%b,x1,x)
-	*y = *x1 - a/b**x
-	return d
-}
-
-func Bezoute_coefficients(a int,b int)(int,int){
-	var x = new(int)
-	var y = new(int)
-	_ = exgcd(a,b,x,y)
-	return *x,*y
-}
+//func exgcd(a int,b int,x *int,y *int)(int){
+//	if b>a{
+//		return exgcd(b,a,y,x)
+//	}
+//	if b==0{
+//		*x = 1
+//		*y = 0
+//		return a
+//	}
+//	var x1 = new(int)
+//	var d = exgcd(b,a%b,x1,x)
+//	*y = *x1 - a/b**x
+//	return d
+//}
+//
+//func Bezoute_coefficients(a int,b int)(int,int){
+//	var x = new(int)
+//	var y = new(int)
+//	_ = exgcd(a,b,x,y)
+//	return *x,*y
+//}
 
 func Exgcd(a big.Int,b big.Int,x *big.Int,y *big.Int) big.Int {
 	if b.Cmp(&a)==1{
@@ -166,16 +166,19 @@ func calculate_product(list []*big.Int)*big.Int{
 	return base
 }
 
-func create_all_membership_witness(A0 *big.Int,set map[string]*big.Int,N *big.Int)[]*big.Int{
+func Create_all_membership_witness(A0 *big.Int,set map[string]*big.Int,N *big.Int)[]*big.Int{
 	var primes []*big.Int
 	for k := range set{
 		prime,_ := HashToPrime(k)
 		primes=append(primes, prime)
+		fmt.Println(k,prime)
 	}
-	return root_factor(A0,primes,N)
+
+	fmt.Println(primes)
+	return Root_factor(A0,primes,N)
 }
 
-func root_factor(g *big.Int,primes []*big.Int,N *big.Int)[]*big.Int{
+func Root_factor(g *big.Int,primes []*big.Int,N *big.Int)[]*big.Int{
 	n := len(primes)
 	if n==1{
 		var result []*big.Int
@@ -184,16 +187,19 @@ func root_factor(g *big.Int,primes []*big.Int,N *big.Int)[]*big.Int{
 	}
 
 	n_tag := n/2
+
 	primes_L := primes[n_tag:n]
 	product_L := calculate_product(primes_L)
-	g_L := g.Exp(g,product_L,N)
+	g_L := big.NewInt(1)
+	g_L.Exp(g,product_L,N)
 
 	primes_R := primes[0:n_tag]
 	product_R := calculate_product(primes_R)
-	g_R := g.Exp(g,product_R,N)
+	g_R := big.NewInt(1)
+	g_R.Exp(g,product_R,N)
 
-	L := root_factor(g_L, primes_R,N)
-	R := root_factor(g_R, primes_L,N)
+	L := Root_factor(g_L, primes_R,N)
+	R := Root_factor(g_R, primes_L,N)
 
 	var result []*big.Int
 	result = append(result, L...)

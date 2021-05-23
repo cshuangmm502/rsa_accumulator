@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	RSA_KEY_SIZE = 16
+	RSA_KEY_SIZE = 32
 	RSA_PRIME_SIZE = RSA_KEY_SIZE/2
 	ACCUMULATED_PRIME_SIZE = 128
 )
@@ -49,8 +49,8 @@ func (rsaObj *RSAAccumulator)GetA0() *big.Int {
 	return rsaObj.a0
 }
 
-func (rsaObj *RSAAccumulator)GetVal(bigInteger big.Int) *big.Int {
-	return rsaObj.data[bigInteger.String()]
+func (rsaObj *RSAAccumulator)GetVal(key string) *big.Int {
+	return rsaObj.data[key]
 }
 
 //func (rsaObj *RSAAccumulator)AddMember(key *big.Int) *big.Int {
