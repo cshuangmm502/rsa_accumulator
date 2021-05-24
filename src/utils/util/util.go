@@ -41,7 +41,7 @@ func CheckPrime(p *big.Int)bool{
 //	return x,big.NewInt(int64(count));
 //}
 
-func HashToPrime(input string) (*big.Int,*big.Int){
+func HashToPrime(input string) (*big.Int,int){
 	count := 0
 	x := HashToLength(input)
 	//fmt.Println(x)
@@ -52,9 +52,13 @@ func HashToPrime(input string) (*big.Int,*big.Int){
 		x.Add(x,big.NewInt(1))
 		count++
 	}
-	return x,big.NewInt(int64(count));
+	return x,count;
 }
 
+func HashToPrimeWithNonce(input string,nonce int)(*big.Int){
+	val := big.NewInt(int64(nonce))
+	return val.Add(val,HashToLength(input))
+}
 //采用sha256做hash,截取前bitLength(256)位
 //func HashToLength(x *big.Int) *big.Int {
 //	var randomHexString string
@@ -166,10 +170,10 @@ func calculate_product(list []*big.Int)*big.Int{
 	return base
 }
 
-func Create_all_membership_witness(A0 *big.Int,set map[string]*big.Int,N *big.Int)[]*big.Int{
+func Create_all_membership_witness(A0 *big.Int,set map[string]int,N *big.Int)[]*big.Int{
 	var primes []*big.Int
-	for k := range set{
-		prime,_ := HashToPrime(k)
+	for k,v := range set{
+		prime := HashToPrimeWithNonce(k,v)
 		primes=append(primes, prime)
 		fmt.Println(k,prime)
 	}

@@ -19,7 +19,7 @@ const (
 //}
 
 type RSAAccumulator struct {
-	data 	map[string]*big.Int			//["key":hashPrime]
+	data 	map[string]int			//["key":hashPrime]
 	pair 	*pair.Pair
 	p		*big.Int
 	q 		*big.Int
@@ -49,7 +49,7 @@ func (rsaObj *RSAAccumulator)GetA0() *big.Int {
 	return rsaObj.a0
 }
 
-func (rsaObj *RSAAccumulator)GetVal(key string) *big.Int {
+func (rsaObj *RSAAccumulator)GetVal(key string) int {
 	return rsaObj.data[key]
 }
 
@@ -70,10 +70,10 @@ func (rsaObj *RSAAccumulator)AddMember(key string) *big.Int {
 	if ok{
 		return rsaObj.a
 	}
-	hashPrime,_ :=util.HashToPrime(key)
+	hashPrime,count :=util.HashToPrime(key)
 	//fmt.Println(hashPrime)
 	rsaObj.a.Exp(rsaObj.a,hashPrime,rsaObj.n)
-	rsaObj.data[key]=hashPrime
+	rsaObj.data[key]=count
 	return rsaObj.a
 }
 
@@ -126,7 +126,8 @@ func (rsaObj *RSAAccumulator)iterateAndGetProductWithoutX(key string) *big.Int{
 	result := big.NewInt(1)
 	for k,v := range rsaObj.data{
 		if k!=key{
-			result.Mul(result,v)
+			prime := util.HashToPrimeWithNonce(k,v)
+			result.Mul(result,prime)
 		}
 	}
 	return result
@@ -134,8 +135,10 @@ func (rsaObj *RSAAccumulator)iterateAndGetProductWithoutX(key string) *big.Int{
 
 func (rsaObj *RSAAccumulator)iterateAndGetProduct() *big.Int{
 	result := big.NewInt(1)
-	for _,v := range rsaObj.data{
-		result.Mul(result,v)
+	for k,v := range rsaObj.data{
+		prime := util.HashToPrimeWithNonce(k,v)
+		result.Mul(result,prime)
+		result.Mul(result,prime)
 	}
 	return result
 }
@@ -146,7 +149,7 @@ func (rsaObj *RSAAccumulator)getPair() *pair.Pair {
 
 
 func New() *RSAAccumulator {
-	data := make(map[string]*big.Int)
+	data := make(map[string]int)
 	pair := pair.NewPair(RSA_PRIME_SIZE)
 	var N = new(big.Int)
 	N.Mul(pair.GetFirst(), pair.GetSecond())

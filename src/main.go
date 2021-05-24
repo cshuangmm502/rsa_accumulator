@@ -4,7 +4,6 @@ import (
 	"awesomeProject/src/accumulator/rsaAccumulator"
 	"awesomeProject/src/utils/util"
 	"fmt"
-	"math/big"
 )
 
 func main()  {
@@ -64,7 +63,7 @@ func test(){
 	test := rsaAccumulator.New()
 
 	N := test.GetN()
-	dict := make(map[string]*big.Int)
+	dict := make(map[string]int)
 	test.AddMember("37")
 	test.AddMember("59")
 	test.AddMember("73")
@@ -74,6 +73,7 @@ func test(){
 	dict["73"]=test.GetVal("73")
 	dict["117"]=test.GetVal("117")
 
+	fmt.Println(dict)
 	//var primes []*big.Int
 	//primes = append(primes, big.NewInt(3))
 	//primes = append(primes, big.NewInt(5))
