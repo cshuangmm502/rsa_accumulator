@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	RSA_KEY_SIZE = 32
+	RSA_KEY_SIZE = 12
 	RSA_PRIME_SIZE = RSA_KEY_SIZE/2
 	ACCUMULATED_PRIME_SIZE = 128
 )
@@ -76,6 +76,10 @@ func (rsaObj *RSAAccumulator)AddMember(key string) *big.Int {
 	rsaObj.data[key]=count
 	return rsaObj.a
 }
+
+//func (rsaObj *RSAAccumulator)UpdateExistProof(proof string,key string) *big.Int{
+//	hashPrime,_ :=util.HashToPrime(key)
+//}
 
 func (rsaObj *RSAAccumulator)ProveMembership(key string) *big.Int {
 	_,ok := rsaObj.data[key]

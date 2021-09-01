@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
+	"sort"
 )
 
 const PRIME_CERTAINTY  = 5
@@ -113,34 +114,33 @@ func GenerateRandomNumber(min big.Int,max big.Int) *big.Int{
 }
 
 
-//func exgcd(a int,b int,x *int,y *int)(int){
-//	if b>a{
-//		return exgcd(b,a,y,x)
-//	}
-//	if b==0{
-//		*x = 1
-//		*y = 0
-//		return a
-//	}
-//	var x1 = new(int)
-//	var d = exgcd(b,a%b,x1,x)
-//	*y = *x1 - a/b**x
-//	return d
-//}
-//
-//func Bezoute_coefficients(a int,b int)(int,int){
-//	var x = new(int)
-//	var y = new(int)
-//	_ = exgcd(a,b,x,y)
-//	return *x,*y
-//}
+func exgcd(a int,b int,x *int,y *int)(int){
+	if b>a{
+		return exgcd(b,a,y,x)
+	}
+	if b==0{
+		*x = 1
+		*y = 0
+		return a
+	}
+	var x1 = new(int)
+	var d = exgcd(b,a%b,x1,x)
+	*y = *x1 - a/b**x
+	return d
+}
+
+func Bezoute_coefficients(a int,b int)(int,int){
+	var x = new(int)
+	var y = new(int)
+	_ = exgcd(a,b,x,y)
+	return *x,*y
+}
 
 func Exgcd(a big.Int,b big.Int,x *big.Int,y *big.Int) big.Int {
 	if b.Cmp(&a)==1{
 		return Exgcd(b,a,y,x)
 	}
 	if b.Cmp(big.NewInt(0))==0{
-
 		x.Set(big.NewInt(1))
 		y.Set(big.NewInt(0))
 		return a
@@ -172,11 +172,21 @@ func calculate_product(list []*big.Int)*big.Int{
 
 func Create_all_membership_witness(A0 *big.Int,set map[string]int,N *big.Int)[]*big.Int{
 	var primes []*big.Int
-	for k,v := range set{
-		prime := HashToPrimeWithNonce(k,v)
+	sorted_keys := make([]string, 0)
+	for k, _ := range set {
+		sorted_keys = append(sorted_keys, k)
+	}
+	sort.Strings(sorted_keys)
+	for _,k := range sorted_keys{
+		prime := HashToPrimeWithNonce(k,set[k])
 		primes=append(primes, prime)
 		fmt.Println(k,prime)
 	}
+	//for k,v := range set{
+	//	prime := HashToPrimeWithNonce(k,v)
+	//	primes=append(primes, prime)
+	//	fmt.Println(k,prime)
+	//}
 
 	fmt.Println(primes)
 	return Root_factor(A0,primes,N)
@@ -185,8 +195,10 @@ func Create_all_membership_witness(A0 *big.Int,set map[string]int,N *big.Int)[]*
 func Root_factor(g *big.Int,primes []*big.Int,N *big.Int)[]*big.Int{
 	n := len(primes)
 	if n==1{
-		var result []*big.Int
-		result = append(result,g)
+		var result = make([]*big.Int,1)
+		result[0]=g
+		//var result1 []*big.Int
+		//result1 = append(result1,g)
 		return result
 	}
 
@@ -205,8 +217,21 @@ func Root_factor(g *big.Int,primes []*big.Int,N *big.Int)[]*big.Int{
 	L := Root_factor(g_L, primes_R,N)
 	R := Root_factor(g_R, primes_L,N)
 
-	var result []*big.Int
-	result = append(result, L...)
-	result = append(result, R...)
-	return result
+	//var result []*big.Int
+	////result = append(result, L...)
+	//result = append(L, R...)
+	return append(L,R...)
 }
+
+
+//func testEct(a int,b int)(int,int,int){
+//
+//}
+//
+//func Bezoute(a int,b int)(int,int){
+//	pam1,pam2,pam3 := testEct(a,b)
+//	var x = new(int)
+//	var y = new(int)
+//	_ = exgcd(a,b,x,y)
+//	return *x,*y
+//}
