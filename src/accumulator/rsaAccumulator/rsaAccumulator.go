@@ -18,6 +18,11 @@ const (
 //	GetN() big.Int
 //}
 
+type non_mem_witness struct {
+	A *big.Int
+	B *big.Int
+}
+
 type RSAAccumulator struct {
 	data 	map[string]int			//["key":hashPrime]
 	pair 	*pair.Pair
@@ -98,6 +103,54 @@ func (rsaObj *RSAAccumulator)VerifyMembership(key string,proof *big.Int) bool{
 	hashPrime,_ := util.HashToPrime(key)
 	return	doVerifyMembership(rsaObj.a,hashPrime,proof,rsaObj.n)
 }
+
+func (rsaObj *RSAAccumulator)ProveNonMembership(A big.Int,set []string,x string,g big.Int) *non_mem_witness{
+	primes := big.NewInt(1)
+	for _,element := range set{
+		prime,_ := util.HashToPrime(element)
+		primes.Mul(primes,prime)
+	}
+	x_prime,_ := util.HashToPrime(x)
+	b,a := util.Bezoute_Coefficients(*primes,*x_prime)
+	fmt.Println(&b)
+	fmt.Println(&a)
+	result_b := big.NewInt(1)
+	result_b.Exp(&g,&b,rsaObj.n)
+	non_mem_witness := &non_mem_witness{
+		A: &a,
+		B: result_b,
+	}
+	return non_mem_witness
+}
+
+//func (rsaObj *RSAAccumulator)ProveNonmembership(A0 big.Int,set []string,x string,n big.Int) *non_mem_witness{
+//	for _,val := range set{
+//		if x==val{
+//			return nil
+//		}
+//	}
+//	primes := big.NewInt(1)
+//	for _,element := range set{
+//		prime,_ := util.HashToPrime(element)
+//		primes.Mul(primes,prime)
+//	}
+//	x_prime,_ := util.HashToPrime(x)
+//	a,b := util.Bezoute_Coefficients(*primes,*x_prime)
+//	d := big.NewInt(1)
+//	inverse_A0 := big.NewInt(1)
+//	if a.Cmp(big.NewInt(0))<0{
+//		a.Abs(&a)
+//		inverse_A0 := util.Mul_inv(A0,n)
+//		b.Exp(&inverse_A0,&a,&n)
+//	}else{
+//
+//	}
+//}
+
+//func (rsaObj *RSAAccumulator)VerifyNonMembership(An big.Int,Am big.Int,x string,proof non_mem_witness){
+//	x_prime,_ := util.HashToPrime(x)
+//
+//}
 
 //func (rsaObj *RSAAccumulator)ProveNoMembership(key *big.Int) *big.Int{
 //	v,ok := rsaObj.data[key.String()]

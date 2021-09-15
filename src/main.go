@@ -23,10 +23,20 @@ func main()  {
 	//fmt.Println(privateKey)
 
 	//贝祖系数计算测试
-	a := big.NewInt(165)
-	b := big.NewInt(7)
+	a := big.NewInt(7)
+	b := big.NewInt(165)
 	x,y := util.Bezoute_Coefficients(*a,*b)
 	fmt.Printf("x[%s],y[%s]\n",x.String(),y.String())
+
+	//test non-membership-witness
+	//acc := rsaAccumulator.New()
+	//acc.AddMember("3")
+	//acc.AddMember("5")
+	//acc.AddMember("11")
+	////B := acc.ProveNonMembership(*acc.GetA(),[]string{"3","5","11"},"7",*acc.GetA0())
+	//fmt.Println(B)
+	//test non-membership-witness
+
 
 	//crtStr := readCert("testCert.pem")
 	//crtStr2 := readCert("test_server.crt")
@@ -42,9 +52,11 @@ func main()  {
 	//var test = new(big.Int)
 	//test.Mod(a,b)
 
+
+
 	//贝祖
-	x1,y1 := util.Bezoute_coefficients(165,7)
-	fmt.Printf("x[%d],y[%d]\n",x1,y1)
+	//x1,y1 := util.Bezoute_coefficients(7,165)
+	//fmt.Printf("x[%d],y[%d]\n",x1,y1)
 
 
 	//start := time.Now()

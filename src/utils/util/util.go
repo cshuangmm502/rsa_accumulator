@@ -136,30 +136,68 @@ func Bezoute_coefficients(a int,b int)(int,int){
 	return *x,*y
 }
 
-func Exgcd(a big.Int,b big.Int,x *big.Int,y *big.Int) big.Int {
-	if b.Cmp(&a)==1{
-		return Exgcd(b,a,y,x)
+//func Exgcd(a big.Int,b big.Int,x *big.Int,y *big.Int) big.Int {
+//	if b.Cmp(&a)==1{
+//		return Exgcd(b,a,y,x)
+//	}
+//	if b.Cmp(big.NewInt(0))==0{
+//		x.Set(big.NewInt(1))
+//		y.Set(big.NewInt(0))
+//		return a
+//	}
+//	var x1 = new(big.Int)
+//	var temp,temp1,temp2 big.Int
+//	temp.Mod(&a,&b)
+//	var d = Exgcd(b,temp,x1,x)
+//	temp1.Mod(&a,&b)
+//	temp2.Mul(&temp1,x)
+//	y.Sub(x1,&temp2)
+//	return d
+//}
+
+func Exgcd(a big.Int,b big.Int) (big.Int,big.Int,big.Int){
+	var x0,x1,y0,y1 big.Int
+	x0.Set(big.NewInt(1))
+	x1.Set(big.NewInt(0))
+	y0.Set(big.NewInt(0))
+	y1.Set(big.NewInt(1))
+	for a.Cmp(big.NewInt(0))==1{
+		var q big.Int
+		var temp big.Int
+		q.Div(&b,&a)
+		temp.Set(&a)
+		a.Mod(&b,&a)
+		b.Set(&temp)
+		temp.Set(&x1)
+		x1.Mul(&q,&x1)
+		x1.Sub(&x0,&x1)
+		x0.Set(&temp)
+		temp.Set(&y1)
+		y1.Mul(&q,&y1)
+		y1.Sub(&y0,&y1)
+		y0.Set(&temp)
 	}
-	if b.Cmp(big.NewInt(0))==0{
-		x.Set(big.NewInt(1))
-		y.Set(big.NewInt(0))
-		return a
+	return b,x0,y0
+}
+
+//func Bezoute_Coefficients(a big.Int,b big.Int)(big.Int,big.Int){
+//	var x = new(big.Int)
+//	var y = new(big.Int)
+//	_ = Exgcd(a,b,x,y)
+//	return *x,*y
+//}
+
+func Mul_inv(b big.Int,n big.Int)(big.Int){
+	g,x,_ := Exgcd(b,n)
+	if g.Cmp(big.NewInt(1))==0{
+		return *g.Mod(&x,&n)
 	}
-	var x1 = new(big.Int)
-	var temp,temp1,temp2 big.Int
-	temp.Mod(&a,&b)
-	var d = Exgcd(b,temp,x1,x)
-	temp1.Mod(&a,&b)
-	temp2.Mul(&temp1,x)
-	y.Sub(x1,&temp2)
-	return d
+	return big.Int{}
 }
 
 func Bezoute_Coefficients(a big.Int,b big.Int)(big.Int,big.Int){
-	var x = new(big.Int)
-	var y = new(big.Int)
-	_ = Exgcd(a,b,x,y)
-	return *x,*y
+	_,x0,y0 := Exgcd(a,b)
+	return x0,y0
 }
 
 func calculate_product(list []*big.Int)*big.Int{
