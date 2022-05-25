@@ -104,23 +104,36 @@ func (rsaObj *RSAAccumulator)VerifyMembership(key string,proof *big.Int) bool{
 	return	doVerifyMembership(rsaObj.a,hashPrime,proof,rsaObj.n)
 }
 
-func (rsaObj *RSAAccumulator)ProveNonMembership(A big.Int,set []string,x string,g big.Int) *non_mem_witness{
+func (rsaObj *RSAAccumulator)ProveNonmembership(A0 big.Int,set []string,x string,n big.Int) *non_mem_witness{
+	for _,val := range set{
+		if x==val{
+			return nil
+		}
+	}
 	primes := big.NewInt(1)
 	for _,element := range set{
 		prime,_ := util.HashToPrime(element)
 		primes.Mul(primes,prime)
 	}
 	x_prime,_ := util.HashToPrime(x)
-	b,a := util.Bezoute_Coefficients(*primes,*x_prime)
-	fmt.Println(&b)
-	fmt.Println(&a)
-	result_b := big.NewInt(1)
-	result_b.Exp(&g,&b,rsaObj.n)
-	non_mem_witness := &non_mem_witness{
-		A: &a,
-		B: result_b,
+	a,b := util.Bezoute_Coefficients(*primes,*x_prime)
+	fmt.Println(&a,&b)
+	d := big.NewInt(1)
+	//inverse_A0 := big.NewInt(1)
+	if a.Cmp(big.NewInt(0))<0{
+		a.Abs(&a)
+		fmt.Println(&A0)
+		fmt.Printf("x[%s]",A0.String())
+		fmt.Printf("x[%s]",n.String())
+		inverse_A0 := util.Mul_inv(A0,n)
+		d.Exp(&inverse_A0,&a,&n)
+	}else{
+		d.Exp(&A0,&a,&n)
 	}
-	return non_mem_witness
+	var result non_mem_witness
+	result.A=d
+	result.B=&b
+	return &result
 }
 
 //func (rsaObj *RSAAccumulator)ProveNonmembership(A0 big.Int,set []string,x string,n big.Int) *non_mem_witness{

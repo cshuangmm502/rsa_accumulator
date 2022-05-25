@@ -6,7 +6,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"math/big"
 	"os"
 	"sort"
 	"time"
@@ -23,17 +22,18 @@ func main()  {
 	//fmt.Println(privateKey)
 
 	//贝祖系数计算测试
-	a := big.NewInt(7)
-	b := big.NewInt(165)
-	x,y := util.Bezoute_Coefficients(*a,*b)
-	fmt.Printf("x[%s],y[%s]\n",x.String(),y.String())
+	//a := big.NewInt(7)
+	//b := big.NewInt(165)
+	//x,y := util.Bezoute_Coefficients(*a,*b)
+	//fmt.Printf("x[%s],y[%s]\n",x.String(),y.String())
 
 	//test non-membership-witness
 	//acc := rsaAccumulator.New()
 	//acc.AddMember("3")
 	//acc.AddMember("5")
 	//acc.AddMember("11")
-	////B := acc.ProveNonMembership(*acc.GetA(),[]string{"3","5","11"},"7",*acc.GetA0())
+	////acc.ProveNonmembership()
+	//B := acc.ProveNonmembership(*acc.GetA(),[]string{"3","5","11"},"7",*acc.GetA0())
 	//fmt.Println(B)
 	//test non-membership-witness
 
@@ -52,7 +52,7 @@ func main()  {
 	//var test = new(big.Int)
 	//test.Mod(a,b)
 
-
+	test()
 
 	//贝祖
 	//x1,y1 := util.Bezoute_coefficients(7,165)
